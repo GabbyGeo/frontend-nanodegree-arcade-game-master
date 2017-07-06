@@ -122,11 +122,16 @@ function checkCollisions() {
    enemy.x + 80 > player.x &&
    enemy.y < player.y + 60 &&
    enemy.y + 60 > player.y) {
-   console.log('COLLISION!')
+   console.log('COLLISION!');
    player.x = 200;
    player.y = 390;
   }
  });
+
+ /*checkCollisions = function {
+  ctx.fillText("COLLISION", 50, 300)
+        
+ }*/
 
  Player.prototype.renderWin = function() {
   ctx.font = "30px Roboto Slab";
