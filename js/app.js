@@ -1,26 +1,39 @@
 // inheritance created to avoid repeating 
-var character = function() {}
+'use strict';
+var Character = function(x,y,sprite) {
+    this.x = x;
+    this.y = y;
+    this.sprite = sprite;
+}
 
-character.prototype.render = function() {
+Character.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 // Enemies our player must avoid
 var Enemy = function(x, y, speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
-    this.x = x;
-    this.y = y;
+    Character.call(this, x, y, 'images/enemy-bug.png');
     this.speed = speed;
-    this.sprite = 'images/enemy-bug.png';
-
 };
 
-Enemy.prototype = Object.create(character.prototype);
+Enemy.prototype = Object.create(Character.prototype);
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
+
+//Function to detect for collisions between enemy and player
+Enemy.prototype.checkCollisions = function() {
+            if (this.x < player.x + 80 &&
+            this.x + 80 > player.x &&
+            this.y < player.y + 60 &&
+            this.y + 60 > player.y) {
+            console.log('COLLISION!');
+            player.x = 200;
+            player.y = 390;
+        }
+    };
+    
+
 Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
@@ -29,6 +42,7 @@ Enemy.prototype.update = function(dt) {
     if (this.x > 600) {
         this.x = -110;
     }
+    this.checkCollisions();
 };
 
 
@@ -51,17 +65,15 @@ Enemy.prototype.reset = function() {
 // a handleInput() method.
 
 
-var Player = function() {
-    this.x = 200;
-    this.y = 390;
+var Player = function(x, y, speed) {
+    Character.call(this, x, y, 'images/char-princess-girl.png');
     this.speed = 30;
-    this.sprite = 'images/char-princess-girl.png';
 };
 
-Player.prototype = Object.create(character.prototype);
+Player.prototype = Object.create(Character.prototype);
 
 Player.prototype.update = function(dt) {
-    if (this.x > 450 || this.x < -80 || this.y > 440) {
+    if (this.x > 420 || this.x < -20 || this.y > 440) {
         this.x = 200;
         this.y = 390;
     } else if (this.y < 0) {
@@ -122,27 +134,9 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
-
-function checkCollisions() {
-    allEnemies.forEach(function(enemy) {
-        if (enemy.x < player.x + 80 &&
-            enemy.x + 80 > player.x &&
-            enemy.y < player.y + 60 &&
-            enemy.y + 60 > player.y) {
-            console.log('COLLISION!');
-            player.x = 200;
-            player.y = 390;
-        }
-    });
-
-    /*checkCollisions = function {
-     ctx.fillText("COLLISION", 50, 300)
-           
-    }*/
-
-    Player.prototype.renderWin = function() {
+Player.prototype.renderWin = function() {
         ctx.font = "30px Roboto Slab";
         ctx.fillStyle = "black";
-        ctx.fillText("Winner!  Refresh to Start Again", 50, 300);
+        ctx.textAlign = "center";
+        ctx.fillText("Winner!", 250, 300);
     }
-}
